@@ -228,6 +228,14 @@ All four stages share the narrative prompt:
 
 ---
 
+### 5.4 Localization & Scaffold-First Content Architecture
+*(User Decision)*
+
+- **Separate Locale Files (`src/locales/`):** Zero narrative prose or explanation "word salads" may be hardcoded inside JSX components. All UI strings, stage headers, mission objectives, narrative paragraphs, and "Under the Hood" mathematical explanations must reside in structured locale dictionaries (e.g., `src/locales/en.ts` and `src/locales/hu.ts`) consumed via a typed `useLocale()` hook and language toggle (`EN` / `HU`) in the Neo-Brutalist top bar.
+- **Scaffold-First Progression:** Implementation begins with a clean, functional scaffold using concise structural copy in the locale files to verify layout transitions, interactive algorithms, and visualizers first, allowing narrative copy and translations to be iterated on independently in the locale files.
+
+---
+
 ## 6. What Is Left to the Builder
 
 1. **Component Structure:** Organizing the Vite + React + TypeScript codebase cleanly (e.g., `src/data/decodingData.ts`, `src/components/StarCanvas/`, `src/components/StageCard/`, `src/components/MathDrawer/`).

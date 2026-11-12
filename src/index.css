@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #FFFDF7;
+    color: #000000;
+    font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+.brutal-border {
+  border: 3px solid #000000;
+}
+
+.brutal-border-sm {
+  border: 2px solid #000000;
+}
+
+.brutal-shadow {
+  box-shadow: 4px 4px 0px #000000;
+}
+
+.brutal-shadow-lg {
+  box-shadow: 6px 6px 0px #000000;
+}
+
+.brutal-shadow-sm {
+  box-shadow: 2px 2px 0px #000000;
+}
+
+.brutal-btn {
+  border: 3px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.brutal-btn:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0px #000000;
+}
+
+.brutal-btn:active:not(:disabled) {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+.brutal-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.star-grid-bg {
+  background-color: #E0E7FF;
+  background-image: radial-gradient(#000000 1.35px, transparent 1.35px);
+  background-size: 22px 22px;
+}
+
+.paper-grid-bg {
+  background-color: #FFFDF7;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.18) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+input[type="range"].brutal-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 14px;
+  background: #FFFFFF;
+  border: 2.5px solid #000000;
+  box-shadow: 2px 2px 0px #000000;
+  cursor: pointer;
+}
+
+input[type="range"].brutal-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  background: #FFE600;
+  border: 2.5px solid #000000;
+  box-shadow: 2px 2px 0px #000000;
+  cursor: pointer;
+}
+
+input[type="range"].brutal-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  background: #FFE600;
+  border: 2.5px solid #000000;
+  box-shadow: 2px 2px 0px #000000;
+  border-radius: 0;
+  cursor: pointer;
+}
+

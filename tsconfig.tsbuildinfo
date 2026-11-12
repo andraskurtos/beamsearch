@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/main.tsx","./src/testSetup.ts","./src/context/LocaleContext.tsx","./src/context/__tests__/LocaleContext.test.tsx","./src/locales/en.ts","./src/locales/hu.ts","./src/locales/types.ts"],"version":"5.7.3"}

@@ -1,2 +1,4 @@
 conversations
-.superpowers
+.superpowers/
+node_modules/
+dist/
