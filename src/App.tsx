@@ -1,13 +1,32 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'motion/react';
 import { LocaleProvider, useLocale } from './context/LocaleContext';
 import type { StageId } from './locales/types';
 import { TopNavBar } from './components/TopNavBar';
 import { StageCard } from './components/StageCard';
 import { TreeStageControls } from './components/controls/TreeStageControls';
+import { SamplingStageControls } from './components/controls/SamplingStageControls';
 import { StarTreeCanvas } from './components/visualizers/StarTreeCanvas';
+import { ProbabilityBarCanvas } from './components/visualizers/ProbabilityBarCanvas';
+import { LOGIT_CANDIDATES } from './data/decodingData';
+import {
+  computeSamplingDistribution,
+  sampleFromDistribution,
+  type ScaledTokenProb,
+} from './lib/decodingMath';
 
 const PLAYABLE_STAGE_IDS: StageId[] = [1, 2, 3, 4];
+
+function checkStage4Win(temp: number, dist: ScaledTokenProb[]): boolean {
+  if (temp < 1.3) return false;
+  const creativesIn = dist
+    .filter((d) => d.category === 'creative')
+    .every((d) => d.inNucleus);
+  const tailsCutOff = dist
+    .filter((d) => d.category === 'tail')
+    .every((d) => !d.inNucleus);
+  return creativesIn && tailsCutOff;
+}
 
 function StarlightDecoderWorkspace() {
   const { t } = useLocale();
@@ -19,6 +38,15 @@ function StarlightDecoderWorkspace() {
   // Stage 2 (Beam Search) isolated state
   const [beamStep, setBeamStep] = useState<0 | 1 | 2 | 3>(3);
   const [beamWidth, setBeamWidth] = useState<number>(1);
+
+  // Stage 3 (Temperature) isolated state
+  const [stage3Temp, setStage3Temp] = useState<number>(1.0);
+  const [stage3History, setStage3History] = useState<string[]>([]);
+
+  // Stage 4 (Top-P Nucleus) isolated state
+  const [stage4Temp, setStage4Temp] = useState<number>(1.5);
+  const [stage4TopP, setStage4TopP] = useState<number>(1.0);
+  const [stage4History, setStage4History] = useState<string[]>([]);
 
   const [completedStages, setCompletedStages] = useState<Record<StageId, boolean>>({
     0: true,
@@ -32,6 +60,18 @@ function StarlightDecoderWorkspace() {
     setCompletedStages((prev) => (prev[id] ? prev : { ...prev, [id]: true }));
   };
 
+  // Computed distributions for Stages 3 and 4
+  const stage3Dist = useMemo(
+    () => computeSamplingDistribution(LOGIT_CANDIDATES, stage3Temp, 1.0),
+    [stage3Temp]
+  );
+
+  const stage4Dist = useMemo(
+    () => computeSamplingDistribution(LOGIT_CANDIDATES, stage4Temp, stage4TopP),
+    [stage4Temp, stage4TopP]
+  );
+
+  // Stage 1 & 2 handlers
   const handleGreedyStepChange = (nextStep: 0 | 1 | 2 | 3) => {
     setGreedyStep(nextStep);
     if (nextStep === 3) {
@@ -51,6 +91,45 @@ function StarlightDecoderWorkspace() {
     if (beamWidth >= 2 && nextStep === 3) {
       markStageCompleted(2);
     }
+  };
+
+  // Stage 3 handlers
+  const recordStage3Sample = (picked: ScaledTokenProb) => {
+    setStage3History((prev) => [picked.token, ...prev].slice(0, 5));
+    if (stage3Temp >= 1.2 && picked.category === 'creative') {
+      markStageCompleted(3);
+    }
+  };
+
+  const handleFireStage3Probe = () => {
+    const picked = sampleFromDistribution(stage3Dist);
+    recordStage3Sample(picked);
+  };
+
+  // Stage 4 handlers
+  const handleStage4TempChange = (nextTemp: number) => {
+    setStage4Temp(nextTemp);
+    const nextDist = computeSamplingDistribution(LOGIT_CANDIDATES, nextTemp, stage4TopP);
+    if (checkStage4Win(nextTemp, nextDist)) {
+      markStageCompleted(4);
+    }
+  };
+
+  const handleStage4TopPChange = (nextTopP: number) => {
+    setStage4TopP(nextTopP);
+    const nextDist = computeSamplingDistribution(LOGIT_CANDIDATES, stage4Temp, nextTopP);
+    if (checkStage4Win(stage4Temp, nextDist)) {
+      markStageCompleted(4);
+    }
+  };
+
+  const recordStage4Sample = (picked: ScaledTokenProb) => {
+    setStage4History((prev) => [picked.token, ...prev].slice(0, 5));
+  };
+
+  const handleFireStage4Probe = () => {
+    const picked = sampleFromDistribution(stage4Dist);
+    recordStage4Sample(picked);
   };
 
   const handleSelectStage = (stage: StageId) => {
@@ -127,6 +206,45 @@ function StarlightDecoderWorkspace() {
                       onBeamWidthChange={handleBeamWidthChange}
                     />
                   )}
+                  {stageId === 3 && (
+                    <SamplingStageControls
+                      stageId={3}
+                      mode="temperature"
+                      temperature={stage3Temp}
+                      topP={1.0}
+                      onTemperatureChange={setStage3Temp}
+                      onTopPChange={() => {}}
+                      onFireProbe={handleFireStage3Probe}
+                      sampleHistory={stage3History}
+                    />
+                  )}
+                  {stageId === 4 && (
+                    <div className="flex flex-col gap-4">
+                      <SamplingStageControls
+                        stageId={4}
+                        mode="top-p"
+                        temperature={stage4Temp}
+                        topP={stage4TopP}
+                        onTemperatureChange={handleStage4TempChange}
+                        onTopPChange={handleStage4TopPChange}
+                        onFireProbe={handleFireStage4Probe}
+                        sampleHistory={stage4History}
+                      />
+
+                      {/* Practical Summary Cheat Sheet */}
+                      <div className="brutal-border-sm bg-[#E0E7FF] p-3.5 text-xs">
+                        <div className="font-mono font-bold uppercase mb-2">
+                          📋 {t.ui.summaryTitle}
+                        </div>
+                        <ul className="space-y-1.5 list-disc list-inside text-black/90">
+                          <li>{t.ui.summaryItems.greedy}</li>
+                          <li>{t.ui.summaryItems.beam}</li>
+                          <li>{t.ui.summaryItems.temp}</li>
+                          <li>{t.ui.summaryItems.topP}</li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
                 </StageCard>
               ))}
             </div>
@@ -142,26 +260,25 @@ function StarlightDecoderWorkspace() {
               {activeStage === 2 && (
                 <StarTreeCanvas mode="beam" step={beamStep} beamWidth={beamWidth} />
               )}
-              {(activeStage === 3 || activeStage === 4) && (
-                <div className="flex flex-col h-full justify-between">
-                  <div
-                    data-testid="live-transmission-banner"
-                    className="brutal-border-sm brutal-shadow-sm bg-[#FFFDF7] p-3 font-mono text-xs md:text-sm"
-                  >
-                    <span className="text-[10px] uppercase text-black/60 block">
-                      {t.ui.liveTransmission}
-                    </span>
-                    <span className="font-bold">"{t.promptStage3Prefix}..."</span>
-                  </div>
-                  <div className="my-auto text-center p-8 brutal-border-sm bg-[#FFFDF7]/90">
-                    <div className="font-mono text-xs uppercase font-bold text-black/60 mb-1">
-                      {t.stages[activeStage].badge}
-                    </div>
-                    <div className="text-lg font-extrabold">
-                      {t.stages[activeStage].title}
-                    </div>
-                  </div>
-                </div>
+              {activeStage === 3 && (
+                <ProbabilityBarCanvas
+                  mode="temperature"
+                  temperature={stage3Temp}
+                  topP={1.0}
+                  distribution={stage3Dist}
+                  lastSampledToken={stage3History[0] ?? null}
+                  onSelectToken={recordStage3Sample}
+                />
+              )}
+              {activeStage === 4 && (
+                <ProbabilityBarCanvas
+                  mode="top-p"
+                  temperature={stage4Temp}
+                  topP={stage4TopP}
+                  distribution={stage4Dist}
+                  lastSampledToken={stage4History[0] ?? null}
+                  onSelectToken={recordStage4Sample}
+                />
               )}
             </aside>
           </div>
