@@ -27,12 +27,11 @@ export function StageCard({
   const isMathVisible = isCompleted || manualMathOpen;
 
   return (
-    <motion.section
-      layout
+    <section
       id={`stage-section-${stageId}`}
       data-testid={`stage-card-${stageId}`}
       onClick={onActivate}
-      className={`brutal-border bg-[#FFFDF7] p-5 md:p-6 transition-all ${
+      className={`scroll-mt-20 brutal-border bg-[#FFFDF7] p-5 md:p-6 transition-all ${
         isActive
           ? 'brutal-shadow-lg ring-2 ring-black'
           : 'brutal-shadow opacity-85 hover:opacity-100'
@@ -193,6 +192,6 @@ export function StageCard({
           )}
         </AnimatePresence>
       </div>
-    </motion.section>
+    </section>
   );
 }

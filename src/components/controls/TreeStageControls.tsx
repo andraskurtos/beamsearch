@@ -72,12 +72,35 @@ export function TreeStageControls({
           onChange={(e) => onBeamWidthChange(Number(e.target.value))}
           className="brutal-slider"
         />
-        <div className="flex justify-between font-mono text-[10px] text-black/70 mt-1">
-          <span>{t.ui.beamGreedyHint}</span>
-          <span>k=2</span>
-          <span>k=3</span>
-          <span>k=4</span>
-          <span>{t.ui.beamWideHint}</span>
+        {/* Thumb-aligned tick labels for k = 1..5 */}
+        <div className="relative h-5 font-mono text-[10px] text-black/75 mt-1 select-none">
+          <span className="absolute left-0 top-0 text-left">
+            {t.ui.beamGreedyHint}
+          </span>
+          <span
+            data-testid="beam-tick-2"
+            style={{ left: 'calc(25% + 5.5px)' }}
+            className="absolute top-0 -translate-x-1/2"
+          >
+            k=2
+          </span>
+          <span
+            data-testid="beam-tick-3"
+            style={{ left: '50%' }}
+            className="absolute top-0 -translate-x-1/2"
+          >
+            k=3
+          </span>
+          <span
+            data-testid="beam-tick-4"
+            style={{ left: 'calc(75% - 5.5px)' }}
+            className="absolute top-0 -translate-x-1/2"
+          >
+            k=4
+          </span>
+          <span className="absolute right-0 top-0 text-right">
+            {t.ui.beamWideHint}
+          </span>
         </div>
       </div>
 

@@ -1,5 +1,4 @@
-import { useState, useMemo } from 'react';
-import { motion } from 'motion/react';
+import { useState, useMemo, useEffect } from 'react';
 import { LocaleProvider, useLocale } from './context/LocaleContext';
 import type { StageId } from './locales/types';
 import { TopNavBar } from './components/TopNavBar';
@@ -31,6 +30,9 @@ function checkStage4Win(temp: number, dist: ScaledTokenProb[]): boolean {
 function StarlightDecoderWorkspace() {
   const { t } = useLocale();
   const [activeStage, setActiveStage] = useState<StageId>(0);
+  const [scrollRequest, setScrollRequest] = useState<{ stage: StageId; seq: number } | null>(
+    null
+  );
 
   // Stage 1 (Greedy Trap) isolated state
   const [greedyStep, setGreedyStep] = useState<0 | 1 | 2 | 3>(0);
@@ -134,11 +136,22 @@ function StarlightDecoderWorkspace() {
 
   const handleSelectStage = (stage: StageId) => {
     setActiveStage(stage);
-    const el = document.getElementById(`stage-section-${stage}`);
-    if (el && typeof el.scrollIntoView === 'function') {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    setScrollRequest((prev) => ({ stage, seq: (prev?.seq ?? 0) + 1 }));
   };
+
+  useEffect(() => {
+    if (!scrollRequest) return;
+    if (scrollRequest.stage === 0) {
+      if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      return;
+    }
+    const el = document.getElementById(`stage-section-${scrollRequest.stage}`);
+    if (el && typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [scrollRequest]);
 
   const isPreamble = activeStage === 0;
 
@@ -150,8 +163,7 @@ function StarlightDecoderWorkspace() {
         onSelectStage={handleSelectStage}
       />
 
-      <motion.main
-        layout
+      <main
         data-testid="workspace-shell"
         data-layout-mode={isPreamble ? 'preamble-fullscreen' : 'split-workspace'}
         data-active-stage={String(activeStage)}
@@ -283,7 +295,7 @@ function StarlightDecoderWorkspace() {
             </aside>
           </div>
         )}
-      </motion.main>
+      </main>
     </div>
   );
 }

@@ -53,7 +53,7 @@ export function SamplingStageControls({
         </div>
       </div>
 
-      {/* Top-P Slider (Stage 4 only) */}
+      {/* Top-P Slider (Stage 4 only: min=0.10, max=1.00 -> 0.85 is at 83.33%) */}
       {mode === 'top-p' && (
         <div className="pt-2 border-t border-black/15">
           <div className="flex items-center justify-between font-mono text-xs font-bold mb-1.5">
@@ -73,10 +73,20 @@ export function SamplingStageControls({
             onChange={(e) => onTopPChange(Number(e.target.value))}
             className="brutal-slider"
           />
-          <div className="flex justify-between font-mono text-[10px] text-black/70 mt-1">
-            <span>{t.ui.topPStrictHint}</span>
-            <span>{t.ui.topPSweetSpotHint}</span>
-            <span>{t.ui.topPNoFilterHint}</span>
+          <div className="relative h-5 font-mono text-[10px] text-black/75 mt-1 select-none">
+            <span className="absolute left-0 top-0 text-left">
+              {t.ui.topPStrictHint}
+            </span>
+            <span
+              data-testid="top-p-tick-sweet"
+              style={{ left: 'calc(83.33% - 7.3px)' }}
+              className="absolute top-0 -translate-x-1/2 font-bold text-black whitespace-nowrap"
+            >
+              0.85
+            </span>
+            <span className="absolute right-0 top-0 text-right">
+              1.00
+            </span>
           </div>
         </div>
       )}
