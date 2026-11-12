@@ -47,9 +47,9 @@ export function SamplingStageControls({
           className="brutal-slider"
         />
         <div className="flex justify-between font-mono text-[10px] text-black/70 mt-1">
-          <span>0.1 (Frozen / Greedy)</span>
-          <span>1.0 (Standard)</span>
-          <span>2.0 (Chaotic)</span>
+          <span>{t.ui.tempFrozenHint}</span>
+          <span>{t.ui.tempStandardHint}</span>
+          <span>{t.ui.tempChaoticHint}</span>
         </div>
       </div>
 
@@ -74,9 +74,9 @@ export function SamplingStageControls({
             className="brutal-slider"
           />
           <div className="flex justify-between font-mono text-[10px] text-black/70 mt-1">
-            <span>0.10 (Strict)</span>
-            <span>0.85 (Sweet Spot)</span>
-            <span>1.00 (No Filter)</span>
+            <span>{t.ui.topPStrictHint}</span>
+            <span>{t.ui.topPSweetSpotHint}</span>
+            <span>{t.ui.topPNoFilterHint}</span>
           </div>
         </div>
       )}
@@ -120,4 +120,3 @@ export function SamplingStageControls({
     </div>
   );
 }
-

@@ -56,14 +56,19 @@ export function StageCard({
         )}
       </div>
 
-      {/* Stage Heading & Metaphor Scaffold */}
-      <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight leading-tight mb-2">
+      {/* Stage Heading & Narrative */}
+      <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight leading-tight mb-2.5">
         {stageCopy.title}
       </h2>
 
-      <p className="text-sm md:text-base leading-relaxed text-black/90 mb-4">
-        {stageCopy.metaphorScaffold}
-      </p>
+      <div className="space-y-2.5 text-sm md:text-base leading-relaxed text-black/90 mb-4">
+        <p>{stageCopy.metaphorScaffold}</p>
+        {stageCopy.metaphorDetail && (
+          <p className="text-black/80 text-xs md:text-sm bg-white/80 brutal-border-sm p-3">
+            {stageCopy.metaphorDetail}
+          </p>
+        )}
+      </div>
 
       {/* Mission Goal Box */}
       <div className="bg-[#FFE600]/60 brutal-border-sm p-3 mb-4 text-xs md:text-sm font-medium">
@@ -168,15 +173,22 @@ export function StageCard({
               data-testid={`math-drawer-${stageId}`}
               className="mt-3 bg-[#A7F3D0] brutal-border-sm brutal-shadow-sm p-3.5 overflow-hidden"
             >
-              <div className="font-mono text-xs font-bold uppercase tracking-wide mb-1">
+              <div className="font-mono text-xs font-bold uppercase tracking-wide mb-1.5">
                 🔓 {stageCopy.mathTitle}
               </div>
-              <div className="bg-[#FFFDF7] brutal-border-sm px-3 py-1.5 font-mono text-xs font-bold mb-2">
+              <div className="bg-[#FFFDF7] brutal-border-sm px-3 py-1.5 font-mono text-xs font-bold mb-2.5">
                 {stageCopy.mathFormula}
               </div>
-              <p className="text-xs md:text-sm leading-relaxed text-black/90">
+              <p className="text-xs md:text-sm leading-relaxed text-black/90 mb-2.5">
                 {stageCopy.mathScaffold}
               </p>
+              {stageCopy.mathTakeaways.length > 0 && (
+                <ul className="space-y-1.5 list-disc list-inside text-xs text-black/85 border-t border-black/20 pt-2">
+                  {stageCopy.mathTakeaways.map((point, idx) => (
+                    <li key={idx}>{point}</li>
+                  ))}
+                </ul>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

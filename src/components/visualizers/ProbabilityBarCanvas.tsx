@@ -58,8 +58,12 @@ export function ProbabilityBarCanvas({
       <div className="brutal-border-sm bg-[#FFFDF7]/95 p-4 flex-1 flex flex-col justify-between gap-2.5">
         {mode === 'top-p' && (
           <div className="flex items-center justify-between bg-[#FFE600] brutal-border-sm px-3 py-1.5 font-mono text-xs font-bold">
-            <span>🛡️ {t.ui.nucleusZone}: Cumulative P ≤ {(topP * 100).toFixed(0)}%</span>
-            <span>Active Pool: {nucleusCount} tokens</span>
+            <span>
+              🛡️ {t.ui.nucleusZone}: {t.ui.cumulativeThresholdLabel} {(topP * 100).toFixed(0)}%
+            </span>
+            <span>
+              {t.ui.activePoolLabel} {nucleusCount} {t.ui.tokensUnit}
+            </span>
           </div>
         )}
 
@@ -69,16 +73,16 @@ export function ProbabilityBarCanvas({
             const displayProb = mode === 'top-p' ? item.finalProb : item.rawProb;
             const widthPct = Math.max(displayProb * 100, item.inNucleus ? 3 : 0);
 
-            let categoryBadge = 'SAFE';
+            let categoryBadge = t.ui.safeCategory;
             let categoryColor = 'bg-[#E0E7FF] text-black';
             let barFill = 'bg-[#A7F3D0]';
 
             if (item.category === 'creative') {
-              categoryBadge = '★ CREATIVE';
+              categoryBadge = t.ui.creativeCategory;
               categoryColor = 'bg-[#FFE600] text-black';
               barFill = 'bg-[#FFE600]';
             } else if (item.category === 'tail') {
-              categoryBadge = '⚠ TAIL';
+              categoryBadge = t.ui.tailCategory;
               categoryColor = 'bg-[#FF6B6B] text-black';
               barFill = 'bg-[#FF6B6B]';
             }
@@ -122,7 +126,7 @@ export function ProbabilityBarCanvas({
                     </span>
                     {isSampled && (
                       <span className="bg-black text-[#FFE600] px-1.5 py-0.2 text-[10px] font-bold">
-                        🎯 PROBE LANDED
+                        {t.ui.probeLandedBadge}
                       </span>
                     )}
                   </div>
@@ -169,4 +173,3 @@ export function ProbabilityBarCanvas({
     </div>
   );
 }
-

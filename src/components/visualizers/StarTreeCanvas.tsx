@@ -79,7 +79,6 @@ function getNodeState(
     return { status: 'active', cumulativeProb: activeMatch.cumulativeProb };
   }
 
-  // Check if this node was already pruned at or before its own depth
   const bestMatch = matching[0];
   return { status: 'pruned', cumulativeProb: bestMatch.cumulativeProb };
 }
@@ -145,7 +144,7 @@ export function StarTreeCanvas({ mode, step, beamWidth }: StarTreeCanvasProps) {
         >
           {/* Step Column Headers */}
           {[
-            { label: 'ROOT', x: 70 },
+            { label: t.ui.rootLabel, x: 70 },
             { label: `${t.ui.stepLabel} 1`, x: 270 },
             { label: `${t.ui.stepLabel} 2`, x: 520 },
             { label: `${t.ui.stepLabel} 3`, x: 775 },
@@ -161,9 +160,9 @@ export function StarTreeCanvas({ mode, step, beamWidth }: StarTreeCanvasProps) {
                 strokeDasharray="4 4"
               />
               <rect
-                x={col.x - 52}
+                x={col.x - 58}
                 y={6}
-                width={104}
+                width={116}
                 height={22}
                 fill={idx <= step ? '#FFE600' : '#E5E7EB'}
                 stroke="#000000"
@@ -173,7 +172,7 @@ export function StarTreeCanvas({ mode, step, beamWidth }: StarTreeCanvasProps) {
                 x={col.x}
                 y={21}
                 textAnchor="middle"
-                className="font-mono text-[11px] font-bold fill-black"
+                className="font-mono text-[10px] font-bold fill-black"
               >
                 {col.label}
               </text>
@@ -226,7 +225,7 @@ export function StarTreeCanvas({ mode, step, beamWidth }: StarTreeCanvasProps) {
 
             if (isRoot) {
               bg = '#FFE600';
-              badgeText = 'PROMPT';
+              badgeText = t.ui.promptBadge;
             } else if (state.status === 'winner') {
               bg = '#FF6B6B';
             } else if (state.status === 'active') {
@@ -303,10 +302,10 @@ export function StarTreeCanvas({ mode, step, beamWidth }: StarTreeCanvasProps) {
       <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono bg-[#FFFDF7] brutal-border-sm px-3 py-2">
         <div className="flex items-center gap-3">
           <span className="inline-flex items-center gap-1">
-            <span className="w-3 h-3 bg-[#FF6B6B] brutal-border-sm inline-block" /> Best Route
+            <span className="w-3 h-3 bg-[#FF6B6B] brutal-border-sm inline-block" /> {t.ui.bestRoute}
           </span>
           <span className="inline-flex items-center gap-1">
-            <span className="w-3 h-3 bg-[#A7F3D0] brutal-border-sm inline-block" /> Active Beam
+            <span className="w-3 h-3 bg-[#A7F3D0] brutal-border-sm inline-block" /> {t.ui.activeBeam}
           </span>
           <span className="inline-flex items-center gap-1">
             <span className="w-3 h-3 bg-[#E5E7EB] brutal-border-sm inline-block" /> {t.ui.prunedStamp}
@@ -321,4 +320,3 @@ export function StarTreeCanvas({ mode, step, beamWidth }: StarTreeCanvasProps) {
     </div>
   );
 }
-

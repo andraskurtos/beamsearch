@@ -5,10 +5,12 @@ export interface StageLocaleEntry {
   badge: string;
   title: string;
   metaphorScaffold: string;
+  metaphorDetail: string;
   goalText: string;
   mathTitle: string;
   mathFormula: string;
   mathScaffold: string;
+  mathTakeaways: string[];
 }
 
 export interface LocaleSchema {
@@ -43,6 +45,25 @@ export interface LocaleSchema {
     liveTransmission: string;
     sequenceProbability: string;
     clickBarHint: string;
+    bestRoute: string;
+    activeBeam: string;
+    rootLabel: string;
+    promptBadge: string;
+    safeCategory: string;
+    creativeCategory: string;
+    tailCategory: string;
+    probeLandedBadge: string;
+    activePoolLabel: string;
+    tokensUnit: string;
+    cumulativeThresholdLabel: string;
+    tempFrozenHint: string;
+    tempStandardHint: string;
+    tempChaoticHint: string;
+    topPStrictHint: string;
+    topPSweetSpotHint: string;
+    topPNoFilterHint: string;
+    beamGreedyHint: string;
+    beamWideHint: string;
     summaryTitle: string;
     summaryItems: {
       greedy: string;
@@ -53,4 +74,3 @@ export interface LocaleSchema {
   };
   stages: Record<StageId, StageLocaleEntry>;
 }
-

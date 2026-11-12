@@ -25,7 +25,7 @@ export function TreeStageControls({
       <div className="brutal-border-sm bg-white p-3.5 flex flex-col gap-3">
         <div className="flex items-center justify-between font-mono text-xs font-bold">
           <span>{t.ui.stepLabel}: {step} / 3</span>
-          <span className="bg-black text-[#FFE600] px-2 py-0.5">k = 1 (GREEDY)</span>
+          <span className="bg-black text-[#FFE600] px-2 py-0.5">{t.ui.beamGreedyHint}</span>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
@@ -73,11 +73,11 @@ export function TreeStageControls({
           className="brutal-slider"
         />
         <div className="flex justify-between font-mono text-[10px] text-black/70 mt-1">
-          <span>k=1 (Greedy)</span>
+          <span>{t.ui.beamGreedyHint}</span>
           <span>k=2</span>
           <span>k=3</span>
           <span>k=4</span>
-          <span>k=5 (Wide)</span>
+          <span>{t.ui.beamWideHint}</span>
         </div>
       </div>
 
@@ -104,4 +104,3 @@ export function TreeStageControls({
     </div>
   );
 }
-

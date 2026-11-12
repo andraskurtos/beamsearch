@@ -31,13 +31,16 @@ describe('LocaleContext & Locale Dictionaries', () => {
     expect(hu.stages[2].title).not.toEqual(en.stages[2].title);
   });
 
-  it('has non-empty scaffold strings for every stage 0..4 in both locales', () => {
+  it('has complete, non-placeholder narrative and math copy for every stage 0..4 in both locales', () => {
     ([0, 1, 2, 3, 4] as const).forEach((id) => {
-      expect(en.stages[id].metaphorScaffold.length).toBeGreaterThan(10);
-      expect(hu.stages[id].metaphorScaffold.length).toBeGreaterThan(10);
-      expect(en.stages[id].mathScaffold.length).toBeGreaterThan(10);
-      expect(hu.stages[id].mathScaffold.length).toBeGreaterThan(10);
+      expect(en.stages[id].metaphorScaffold).not.toContain('[Scaffold');
+      expect(hu.stages[id].metaphorScaffold).not.toContain('[Vázlat');
+      expect(en.stages[id].mathScaffold).not.toContain('[Scaffold');
+      expect(hu.stages[id].mathScaffold).not.toContain('[Vázlat');
+      expect(en.stages[id].metaphorScaffold.length).toBeGreaterThan(80);
+      expect(hu.stages[id].metaphorScaffold.length).toBeGreaterThan(80);
+      expect(en.stages[id].mathTakeaways.length).toBeGreaterThanOrEqual(2);
+      expect(hu.stages[id].mathTakeaways.length).toBeGreaterThanOrEqual(2);
     });
   });
 });
-
